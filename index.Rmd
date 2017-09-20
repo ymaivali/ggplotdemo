@@ -92,15 +92,14 @@ ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
 ```{r}
 iris1 <- iris %>% filter(Species=="setosa")
 
-ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species)+
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species))+
   geom_point()+
   geom_smooth(data=iris1, method="lm")
 ```
 
 ```{r}
-ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species))+
-  geom_point()+
-  geom_smooth(method="lm")
+ggplot(iris)+
+  geom_point(aes(Sepal.Length, Sepal.Width, shape= Species, color= Species, size=Petal.Length, alpha= Petal.Width))
 ```
 
 ```{r}
@@ -110,7 +109,16 @@ ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species))+
 ```{r}
 ggplot(midwest, aes(percwhite, percbelowpoverty))+
   geom_point(aes(size=poptotal))+
-  geom_smooth(aes(weigth= poptotal), method=lm, size=1)+
+  geom_smooth(aes(weight= poptotal), method=lm, size=1)+
   geom_smooth(method = lm, color="red")
+```
+
+```{r}
+sp <- ggplot(data=mtcars, aes(x=wt, y=mpg))+
+  geom_point()
+sp + geom_hline(yintercept = 20, linetype="dashed", color="red", size=2)
+#sp+ geom_vline()
+sp + geom_segment(x=3 , y=15 , xend=4 , yend=25 )
+sp + geom_segment(aes(x=3 , y=15 , xend=4 , yend=25), arrow= arrow(length = unit(0.3, "cm")))
 ```
 
