@@ -5,26 +5,112 @@ date: "20 September 2017"
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+Load the qiz dataset
+```{r}
+library(tidyverse)
+library(ggthemes)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+a <- read_csv("data/quiz.csv")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+colnames(a) <- c("subject", "years", "supervisor", 
+                 "stat_course", "data_anal", "R_prof",
+                 "x", "x1", "x2", "x3", "x4", "x5", "x6")
+a <- select(a, -x)
 
-```{r cars}
-summary(cars)
+a <- mutate(a, diff_x1_x2=x1 - x2)
+
+a$years <- parse_number(a$years)
+a
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+First some simple plots with base graphics. The main function is plot().
+```{r}
+barplot(table(a$data_anal))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+plot(a$x1)
+```
+
+```{r}
+a$supervisor <- as.factor(a$supervisor)
+# a$supervisor <- as.character(a$supervisor)
+plot(a$supervisor, a$x1, xlim=c(-10,10))
+boxplot(a$x1~a$supervisor)
+#inline comment
+```
+
+```{r}
+stripchart(a$x4)
+```
+
+```{r}
+hist(a$x1, breaks=10)
+```
+
+```{r}
+plot(a$x3, a$x4)
+abline(lm(a$x3~a$x4))
+```
+
+```{r}
+hist(a$x5, breaks = 5)
+```
+
+```{r}
+
+```
+
+# ggplot2
+
+```{r}
+iris <- iris
+iris <- as_tibble(iris)
+str(iris)
+```
+
+ggplot
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE, color="red")+
+  theme_tufte()
+```
+
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+  geom_point()+
+  geom_smooth(data=filter(iris, Species %in% c("virginica", "versicolor")), method="lm")+
+  theme_bw()
+```
+
+```{r}
+iris1 <- iris %>% filter(Species=="setosa")
+
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species)+
+  geom_point()+
+  geom_smooth(data=iris1, method="lm")
+```
+
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color=Species))+
+  geom_point()+
+  geom_smooth(method="lm")
+```
+
+```{r}
+(midwest <- as_tibble(midwest) %>% select(percwhite, percbelowpoverty, poptotal))
+```
+
+```{r}
+ggplot(midwest, aes(percwhite, percbelowpoverty))+
+  geom_point(aes(size=poptotal))+
+  geom_smooth(aes(weigth= poptotal), method=lm, size=1)+
+  geom_smooth(method = lm, color="red")
+```
+
